@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kadolab SMS API - Python Usage Guide</title>
+    <style>
+        /* --- Basic Reset & Dark Theme --- */
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1e1e1e;
+            --tertiary-bg: #2a2a2a;
+            --code-bg: #0d0d0d;
+            --primary-text: #e0e0e0;
+            --secondary-text: #b3b3b3;
+            --accent-color: #03dac6;
+            --accent-hover: #018786;
+            --success-color: #66bb6a;
+            --error-color: #cf6679;
+            --border-color: #3a3a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--secondary-bg);
+            padding: 2rem 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Typography & Links --- */
+        h1, h2, h3 {
+            color: var(--primary-text);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        h1 { font-size: 2.2rem; margin-bottom: 1.5rem; }
+        h2 { font-size: 1.8rem; margin-top: 2.5rem; }
+        h3 { font-size: 1.4rem; border-bottom: none; }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--secondary-text);
+        }
+
+        /* --- Code Blocks & Copy Button --- */
+        .code-block-wrapper {
+            position: relative;
+            margin: 1.5rem 0;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        code {
+            font-family: "Fira Code", "Courier New", Courier, monospace;
+            font-size: 0.9rem;
+            color: var(--primary-text);
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--tertiary-bg);
+            color: var(--primary-text);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        /* --- Tables --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background-color: var(--tertiary-bg);
+            color: var(--primary-text);
+        }
+        td code {
+            background-color: var(--tertiary-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* --- Utility & Badges --- */
+        .endpoint {
+            font-family: "Courier New", Courier, monospace;
+            background-color: var(--tertiary-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+            flex-wrap: wrap;
+        }
+        .method {
+            font-weight: bold;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            color: var(--primary-bg);
+        }
+        .method-post {
+            background-color: var(--success-color);
+        }
+        .note {
+            background-color: rgba(3, 218, 198, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+        .note p {
+            margin: 0;
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Kadolab SMS API - Python Usage Guide</h1>
+        <p>This document provides a clear guide on how to interact with the Kadolab SMS API using Python. It covers user registration and sending SMS messages.</p>
+        <p><strong>API Base URL:</strong> <code>https://sms-api.kadolab.com/api</code></p>
+
+        <!-- ====================================================================== -->
+        <!--                            REGISTRATION SECTION                        -->
+        <!-- ====================================================================== -->
+        <h2>1. User Registration</h2>
+        <p>This endpoint creates a new user account and returns an API token for authenticating future requests.</p>
+        
+        <div class="endpoint">
+            <span class="method method-post">POST</span>
+            <span>/register</span>
+        </div>
+
+        <h3>Parameters (JSON Body)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>name</code></td>
+                    <td>String</td>
+                    <td>The user's full name.</td>
+                </tr>
+                <tr>
+                    <td><code>email</code></td>
+                    <td>String</td>
+                    <td>A unique email address for the account.</td>
+                </tr>
+                <tr>
+                    <td><code>password</code></td>
+                    <td>String</td>
+                    <td>Password for the account. Minimum 8 characters.</td>
+                </tr>
+                <tr>
+                    <td><code>password_confirmation</code></td>
+                    <td>String</td>
+                    <td>Must match the <code>password</code> field.</td>
+                </tr>
+                <tr>
+                    <td><code>sms_gateway_username</code></td>
+                    <td>String</td>
+                    <td>The username from your SMS Gateway mobile app.</td>
+                </tr>
+                <tr>
+                    <td><code>sms_gateway_password</code></td>
+                    <td>String</td>
+                    <td>The password from your SMS Gateway mobile app.</td>
+                </tr>
+                <tr>
+                    <td><code>sms_gateway_url</code></td>
+                    <td>String</td>
+                    <td>The URL for the gateway. Should be set to <code>https://api.sms-gate.app/3rdparty/v1/messages</code>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Python Example: Registering a User</h3>
+        <div class="note">
+            <p><strong>Important:</strong> You must include the <code>Accept: application/json</code> header to ensure the API returns a JSON response.</p>
+        </div>
+        <div class="code-block-wrapper">
+            <button class="copy-btn">Copy</button>
+            <pre><code>import requests
+import json
+
+# The URL for the registration endpoint
+url = "https://sms-api.kadolab.com/api/register"
+
+# Data to be sent in the request body
+# Remember to use a new, unique email for each registration attempt
+payload = {
+    "name": "Your Name",
+    "email": "your_unique_email@example.com",
+    "password": "your_secure_password123",
+    "password_confirmation": "your_secure_password123",
+    "sms_gateway_username": "YOUR_GATEWAY_USERNAME",
+    "sms_gateway_password": "YOUR_GATEWAY_PASSWORD",
+    "sms_gateway_url": "https://api.sms-gate.app/3rdparty/v1/messages"
+}
+
+# Headers to ensure we get a JSON response
+headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+}
+
+# Make the POST request
+response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+# Print the response
+print(f"Status Code: {response.status_code}")
+print("Response JSON:")
+print(response.json())
+</code></pre>
+        </div>
+
+        <h3>Success Response (200 OK)</h3>
+        <p>A successful registration will return a JSON object containing your user details and an API token.</p>
+        <div class="code-block-wrapper">
+            <button class="copy-btn">Copy</button>
+            <pre><code>{
+  "token": "64|1A9FKiM8TJy3lfrqErGHOZaxNB1sJRT6uS7DkSc6c74efdd7",
+  "user": {
+    "name": "Your Name",
+    "email": "your_unique_email@example.com",
+    "sms_gateway_username": "YOUR_GATEWAY_USERNAME",
+    "sms_gateway_password": "YOUR_GATEWAY_PASSWORD",
+    "sms_gateway_url": "https://api.sms-gate.app/3rdparty/v1/messages",
+    "updated_at": "2025-08-13T15:18:04.000000Z",
+    "created_at": "2025-08-13T15:18:04.000000Z",
+    "id": 64
+  }
+}</code></pre>
+        </div>
+
+        <!-- ====================================================================== -->
+        <!--                            SEND SMS SECTION                          -->
+        <!-- ====================================================================== -->
+        <h2>2. Send an SMS</h2>
+        <p>This endpoint sends an SMS message to one or more phone numbers. It requires authentication using the Bearer Token obtained during registration.</p>
+
+        <div class="endpoint">
+            <span class="method method-post">POST</span>
+            <span>/send-sms</span>
+        </div>
+
+        <h3>Authentication</h3>
+        <p>You must include an <code>Authorization</code> header with the token from the registration step.</p>
+        <p>Format: <code>Authorization: Bearer YOUR_API_TOKEN</code></p>
+
+        <h3>Parameters (JSON Body)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>phoneNumbers</code></td>
+                    <td>Array of Strings</td>
+                    <td>A list of phone numbers in international format (e.g., <code>+255620123456</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>message</code></td>
+                    <td>String</td>
+                    <td>The text message content to be sent.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Python Example: Sending an SMS</h3>
+        <div class="note">
+            <p>Remember to replace <code>YOUR_API_TOKEN</code> with the actual token you received from the registration step.</p>
+        </div>
+        <div class="code-block-wrapper">
+            <button class="copy-btn">Copy</button>
+            <pre><code>import requests
+import json
+
+# The URL for the send-sms endpoint
+url = "https://sms-api.kadolab.com/api/send-sms"
+
+# Your API token from the registration response
+api_token = "YOUR_API_TOKEN_HERE" # e.g., "64|1A9FKiM8TJy3lfrqErGHOZaxNB1sJRT6uS7DkSc6c74efdd7"
+
+# Data to be sent in the request body
+payload = {
+    "phoneNumbers": ["+255695533100"],
+    "message": "Hello from the Python API!"
+}
+
+# Headers including the Bearer Token for authentication
+headers = {
+    'Authorization': f'Bearer {api_token}',
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+}
+
+# Make the POST request
+response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+# Print the response
+print(f"Status Code: {response.status_code}")
+print("Response JSON:")
+print(response.json())
+</code></pre>
+        </div>
+
+        <h3>Success Response (200 OK)</h3>
+        <p>A successful request will queue the SMS for sending and return a status message.</p>
+        <div class="code-block-wrapper">
+            <button class="copy-btn">Copy</button>
+            <pre><code>{
+  "status": "queued",
+  "message": "SMS is being sent in the background."
+}</code></pre>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for the "Copy" button functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const allCopyButtons = document.querySelectorAll('.copy-btn');
+
+            allCopyButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const codeBlock = event.target.nextElementSibling;
+                    if (codeBlock && codeBlock.tagName === 'PRE') {
+                        const code = codeBlock.querySelector('code').innerText;
+                        
+                        navigator.clipboard.writeText(code).then(() => {
+                            // Provide feedback to the user
+                            const originalText = button.innerText;
+                            button.innerText = 'Copied!';
+                            button.style.backgroundColor = 'var(--success-color)';
+                            button.style.color = 'var(--primary-bg)';
+
+                            setTimeout(() => {
+                                button.innerText = originalText;
+                                button.style.backgroundColor = ''; // Revert to original style
+                                button.style.color = '';
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Failed to copy text: ', err);
+                            button.innerText = 'Error!';
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
